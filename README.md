@@ -1,4 +1,5 @@
 GCP_INVENTORY_REPORT_GENERATION
+-------------------------------------
 
 This project collects a GCP project's resource inventory using Cloud Asset, writes a single Excel workbook, and uploads it to a GCS bucket.
 
