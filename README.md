@@ -1,9 +1,4 @@
-<<<<<<< HEAD
-# GCP_INVENTORY_REPORT_GENERATION
 GCP_INVENTORY_REPORT_GENERATION
-=======
-GCP-INVENTORYFINAL
-===================
 
 This project collects a GCP project's resource inventory using Cloud Asset, writes a single Excel workbook, and uploads it to a GCS bucket.
 
@@ -101,5 +96,4 @@ Customization
 
 Support
 - If you want, I can add a `--export-gcs` mode that uses `AssetServiceClient.export_assets()` to write a single newline-delimited JSONL file to GCS for very large inventories.
->>>>>>> dbae3da (initial commit)
 
