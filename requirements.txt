@@ -1,0 +1,4 @@
+pandas
+openpyxl
+google-cloud-asset
+importlib-metadata; python_version < "3.10"

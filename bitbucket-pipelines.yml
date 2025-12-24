@@ -1,0 +1,45 @@
+# This is an example Starter pipeline configuration for GCP Inventory
+# Use a skeleton to build, test and deploy using manual and parallel steps
+# -----
+# You can specify a custom docker image from Docker Hub as your build environment.
+
+image: python:3.9
+
+pipelines:
+  default:
+    - step:
+        name: GCP Inventory Generation
+        script:
+          # 1. Setup: Define a unique folder for this build to prevent conflicts
+          - export WORK_DIR="/tmp/gcp-inventory-$BITBUCKET_BUILD_NUMBER"
+          - echo "Setting up workspace at $WORK_DIR"
+          - mkdir -p $WORK_DIR
+
+          # 2. Copy the specific files from Repo to Runner
+          # We need the scripts, requirements, the main source file, and the key file
+          - cp -r install_and_run.sh install_gcloud.sh requirements.txt inventory.py gcp-inventory-sa-key.json $WORK_DIR/
+          - cd $WORK_DIR
+
+          # 3. Permissions: Make the scripts executable
+          - chmod +x install_and_run.sh install_gcloud.sh
+
+          # 4. Execution: Run the Inventory Logic
+          # First, install gcloud
+          - ./install_gcloud.sh
+          # Ensure gcloud is in the PATH for the subsequent scripts
+          - export PATH=$PATH:$(pwd)/google-cloud-sdk/bin
+          
+          # 5. Authentication: Authenticate with Service Account
+          # Using the local key file provided in the repository
+          - gcloud auth activate-service-account --key-file=gcp-inventory-sa-key.json
+          - export GOOGLE_APPLICATION_CREDENTIALS=$(pwd)/gcp-inventory-sa-key.json
+          
+          # 6. Execution: Run the Inventory Logic
+          # It expects two arguments: Project IDs (comma-separated) and Bucket Name.
+          # Ensure GCP_PROJECT_ID and GCS_BUCKET_NAME are defined in Repository variables.
+          - ./install_and_run.sh "$GCP_PROJECT_ID" "$GCS_BUCKET_NAME"
+
+          # 7. Cleanup: Remove the temporary folder
+          - cd ..
+          - rm -rf $WORK_DIR
+          - echo "Cleanup complete."
